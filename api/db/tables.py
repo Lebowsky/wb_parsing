@@ -1,9 +1,16 @@
-from typing import List
+from typing import List, Set
 
 import sqlalchemy as sa
-from sqlalchemy.orm import relationship, declarative_base
 
-Base = declarative_base()
+from sqlalchemy import ForeignKey
+from sqlalchemy.orm import Mapped
+from sqlalchemy.orm import mapped_column
+from sqlalchemy.orm import DeclarativeBase
+from sqlalchemy.orm import relationship
+
+
+class Base(DeclarativeBase):
+    pass
 
 
 class BaseModel(Base):
@@ -33,6 +40,25 @@ class TimedBaseModel(BaseModel):
 class User(TimedBaseModel):
     __tablename__ = 'users'
 
-    id = sa.Column(sa.BigInteger, primary_key=True, autoincrement=False)
-    username = sa.Column(sa.String(50), nullable=True)
-    is_active = sa.Column(sa.Boolean)
+    id: Mapped[int] = mapped_column(primary_key=True, autoincrement=False)
+    username: Mapped[str] = mapped_column(nullable=True)
+    is_active: Mapped[bool] = mapped_column(default=False, nullable=False)
+    products: Mapped[Set['Product']] = relationship()
+
+
+class Product(TimedBaseModel):
+    __tablename__ = 'products'
+
+    id: Mapped[int] = mapped_column(primary_key=True, autoincrement=True)
+    title: Mapped[str] = mapped_column(nullable=False)
+    group_id: Mapped[int] = mapped_column(nullable=True)
+    prices: Mapped[Set['Price']] = relationship()
+    user_id: Mapped[int] = mapped_column(ForeignKey('users.id'), nullable=False)
+
+
+class Price(TimedBaseModel):
+    __tablename__ = 'prices'
+
+    id: Mapped[int] = mapped_column(primary_key=True, autoincrement=True)
+    price: Mapped[float] = mapped_column(nullable=True)
+    product_id: Mapped[int] = mapped_column(ForeignKey('products.id'), nullable=False)
