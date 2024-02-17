@@ -1,5 +1,6 @@
 import asyncio
 import unittest
+from fastapi import HTTPException
 
 from services.users import UsersService
 from models.users import User
@@ -39,4 +40,9 @@ class TestUsersORM(unittest.IsolatedAsyncioTestCase):
             
             user = await service.get(0)
             self.assertEqual(user.username, 'new_name')
+            
+            with self.assertRaises(HTTPException) as cm:
+                await service.get(5)
+            
+            self.assertEqual(cm.exception.status_code, 404)
             

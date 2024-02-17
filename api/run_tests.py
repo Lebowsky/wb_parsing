@@ -1,9 +1,7 @@
 import unittest
 
 testmodules = [
-    'tests.test_users',
-    # 'tests.test_whiteutils',
-    # 'tests.test_cogapp',
+    'tests.orm.test_users',
     ]
 
 suite = unittest.TestSuite()
