@@ -8,3 +8,6 @@ class Product(BaseModel):
     group_id: Optional[int] = None
     user_id: int
     price: Optional[float] = None
+
+    class Config:
+        from_attributes = True

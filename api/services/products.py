@@ -25,6 +25,11 @@ class ProductsService:
             raise HTTPException(status_code=status.HTTP_404_NOT_FOUND)
         return product
 
+    async def get_user_products(self, user_id: int) -> List[tables.Product]:
+        q = select(tables.Product).where(tables.Product.user_id == user_id)
+        res = await self.session.execute(q)
+        return res.scalars().all()
+
     async def create(self, product_data: Product) -> int:
         product_data = product_data.dict()
         price = product_data.pop('price', None)
