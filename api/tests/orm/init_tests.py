@@ -7,11 +7,12 @@ from db.tables import Base
 async def create_sessionmaker():
     engine = create_async_engine(
         'sqlite+aiosqlite:///:memory:',
+        # 'sqlite+aiosqlite:///database.db',
         future=True,
     )
 
     async with engine.begin() as conn:
-        # await conn.run_sync(Base.metadata.drop_all)
+        await conn.run_sync(Base.metadata.drop_all)
         await conn.run_sync(Base.metadata.create_all)
 
     async_sessionmaker = sessionmaker(

@@ -1,1 +1,1 @@
-from .orm import test_users
+from .orm import tests_users

@@ -1,7 +1,8 @@
 import unittest
+import asyncio
 
 testmodules = [
-    'tests.orm.test_users',
+        'tests.orm.tests_orm_services',
     ]
 
 suite = unittest.TestSuite()
@@ -16,4 +17,5 @@ for t in testmodules:
         # else, just load all the test cases from the module.
         suite.addTest(unittest.defaultTestLoader.loadTestsFromName(t))
 
-unittest.TextTestRunner().run(suite)
+if __name__ == '__main__':
+    unittest.TextTestRunner().run(suite)

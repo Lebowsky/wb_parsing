@@ -43,7 +43,7 @@ class User(TimedBaseModel):
     id: Mapped[int] = mapped_column(primary_key=True, autoincrement=False)
     username: Mapped[str] = mapped_column(nullable=True)
     is_active: Mapped[bool] = mapped_column(default=False, nullable=False)
-    products: Mapped[Set['Product']] = relationship()
+    products: Mapped[List['Product']] = relationship(lazy='selectin')
 
 
 class Product(TimedBaseModel):
@@ -52,8 +52,9 @@ class Product(TimedBaseModel):
     id: Mapped[int] = mapped_column(primary_key=True, autoincrement=True)
     title: Mapped[str] = mapped_column(nullable=False)
     group_id: Mapped[int] = mapped_column(nullable=True)
-    prices: Mapped[Set['Price']] = relationship()
-    user_id: Mapped[int] = mapped_column(ForeignKey('users.id'), nullable=False)
+    prices: Mapped[List['Price']] = relationship(lazy='selectin')
+    user_id: Mapped[int] = mapped_column(
+        ForeignKey('users.id', ondelete="CASCADE", onupdate="CASCADE"), nullable=False)
 
 
 class Price(TimedBaseModel):
@@ -61,4 +62,5 @@ class Price(TimedBaseModel):
 
     id: Mapped[int] = mapped_column(primary_key=True, autoincrement=True)
     price: Mapped[float] = mapped_column(nullable=True)
-    product_id: Mapped[int] = mapped_column(ForeignKey('products.id'), nullable=False)
+    product_id: Mapped[int] = mapped_column(
+        ForeignKey('products.id', ondelete="CASCADE", onupdate="CASCADE"), nullable=False)

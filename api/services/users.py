@@ -1,11 +1,8 @@
-import datetime
 from typing import List, Optional
 
 from fastapi import Depends, HTTPException, status
 from sqlalchemy import select
 from sqlalchemy.orm import Session
-from sqlalchemy.sql.expression import func
-from sqlalchemy.exc import IntegrityError
 
 from db import tables, database
 from models.users import User
@@ -19,7 +16,7 @@ class UsersService:
         q = select(tables.User).where(tables.User.id == user_id)
         res = await self.session.execute(q)
         user = res.scalar()
-        
+
         return user
 
     async def get(self, user_id: int) -> tables.User:
@@ -27,7 +24,6 @@ class UsersService:
         if not user:
             raise HTTPException(status_code=status.HTTP_404_NOT_FOUND)
         return user
-        
 
     async def get_list(
             self,
@@ -42,13 +38,13 @@ class UsersService:
         return res.scalars().all()
 
     async def create(self, user_data: User) -> tables.User:
-        user = await self._get(user_data.id) 
-        
+        user = await self._get(user_data.id)
+
         if user:
             return user
         else:
             user = tables.User(**user_data.dict())
-            self.session.add(user) 
+            self.session.add(user)
             await self.session.commit()
             return user
 
@@ -62,7 +58,6 @@ class UsersService:
             return user
         else:
             raise HTTPException(status_code=status.HTTP_404_NOT_FOUND)
-            
 
     async def delete(self, user_id: int):
         user = await self._get(user_id)
