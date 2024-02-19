@@ -43,7 +43,5 @@ class TestPricesService(unittest.IsolatedAsyncioTestCase):
             self.assertEqual(len(await product_service.get_user_products(2)), 1)
             self.assertEqual(len(await product_service.get_user_products(3)), 0)
 
-            print((await product_service.get_user_products(1)))
-
 
 
