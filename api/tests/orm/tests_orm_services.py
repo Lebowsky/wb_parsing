@@ -1,6 +1,7 @@
 import unittest
 from sqlalchemy import text, select
 
+from models.products import UpdateProduct
 from .init_tests import create_sessionmaker
 
 from models import User, Product
@@ -32,7 +33,7 @@ class TestPricesService(unittest.IsolatedAsyncioTestCase):
             self.assertEqual(len(user1.products[0].prices), 1)
             self.assertEqual(user1.products[0].prices[0].price, 100)
 
-            await product_service.update(product_id, Product(title='product1', user_id=1, price=200))
+            await product_service.update(product_id, UpdateProduct(title='product1',  price=200))
 
             user1 = await user_service.get(1)
             self.assertEqual(len(user1.products), 2)

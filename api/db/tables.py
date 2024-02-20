@@ -52,6 +52,8 @@ class Product(TimedBaseModel):
     id: Mapped[int] = mapped_column(primary_key=True, autoincrement=True)
     title: Mapped[str] = mapped_column(nullable=False)
     group_id: Mapped[int] = mapped_column(nullable=True)
+    current_price: Mapped[float] = mapped_column(nullable=True)
+    previous_price: Mapped[float] = mapped_column(nullable=True)
     prices: Mapped[List['Price']] = relationship(lazy='selectin', back_populates='product')
     user_id: Mapped[int] = mapped_column(
         ForeignKey('users.id', ondelete="CASCADE", onupdate="CASCADE"), nullable=False)

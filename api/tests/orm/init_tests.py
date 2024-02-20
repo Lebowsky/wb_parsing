@@ -9,6 +9,7 @@ async def create_sessionmaker():
         'sqlite+aiosqlite:///:memory:',
         # 'sqlite+aiosqlite:///database.db',
         future=True,
+        # echo=True
     )
 
     async with engine.begin() as conn:
