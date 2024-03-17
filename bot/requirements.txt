@@ -1,0 +1,4 @@
+requests==2.31.0
+aiogram==3.4.1
+aiogram-dialog==2.1.0
+pydantic-settings==2.2.0
