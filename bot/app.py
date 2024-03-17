@@ -9,6 +9,18 @@ from aiogram.types import BotCommandScopeAllGroupChats, BotCommand, BotCommandSc
 
 # from aiogram_dialog import DialogRegistry
 from config import settings
+from handlers import register_handlers
+
+
+async def on_startup_notify(bot: Bot):
+    for admin in settings.admins_id:
+        try:
+            text = 'Бот запущен'
+            await bot.send_message(chat_id=admin, text=text)
+        except TelegramBadRequest:
+            logging.info(f'chat {admin} not found')
+        except Exception as err:
+            logging.exception(err)
 
 
 async def main():
@@ -17,6 +29,10 @@ async def main():
     bot = Bot(token=settings.token)
     dp = Dispatcher(storage=MemoryStorage(), events_isolation=SimpleEventIsolation())
     # registry = DialogRegistry()
+
+    register_handlers(dp)
+
+    await on_startup_notify(bot)
 
     print('Бот запущен')
     await dp.start_polling(bot)
