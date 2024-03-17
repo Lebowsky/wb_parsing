@@ -4,3 +4,7 @@ class ProductNotFoundError(Exception):
 
 class ApiRequestError(Exception):
     pass
+
+
+class WrongProductQuery(Exception):
+    pass

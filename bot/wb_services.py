@@ -32,14 +32,15 @@ class ProductModel:
     price: float
 
 
-def get_card_details(item_id: str, **kwargs) -> ProductModel:
+def get_card_details(item_id: int, **kwargs) -> ProductModel:
     params = {
         'nm': item_id,
         'curr': 'rub',
     }
+    url = 'https://card.wb.ru/cards/v1/detail'
 
     try:
-        response = requests.get('https://card.wb.ru/cards/v1/detail', params=params, headers=headers)
+        response = requests.get(url, params=params, headers=headers)
         products = response.json()['data']['products']
     except (KeyError, requests.exceptions.JSONDecodeError, requests.exceptions.HTTPError) as e:
         logger.error(str(e))
@@ -54,6 +55,7 @@ def get_card_details(item_id: str, **kwargs) -> ProductModel:
             price=_parse_price(products[0])
         )
     else:
+        logging.debug(response.url)
         raise exceptions.ProductNotFoundError
 
 
