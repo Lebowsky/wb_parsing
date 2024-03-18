@@ -1,31 +1,36 @@
 import logging
-
+import re
 from aiogram import types
 
-from exceptions import WrongProductQuery
+from exceptions import WrongProductQuery, ProductNotFoundError
 from wb_services import get_card_details, ProductModel
 
 
 async def get_product(message: types.Message):
     try:
-        item_id = _parse_url(message.text)
+        item_id = _parse_message(message.text)
     except WrongProductQuery:
         await message.answer('Неверный запрос')
         return
 
     if item_id:
         logging.info(f'item_id: %s' % item_id)
-        item_info = get_card_details(item_id)
-        await message.answer_photo(**format_product_photo(item_info), parse_mode='html')
-
-
-def _parse_url(url: str) -> int:
-    if url.isdigit():
-        return int(url)
-
-    if url.startswith('https://www.wildberries.ru/catalog/') and url.endswith('/detail.aspx'):
         try:
-            item_id = int(url.split('/')[4])
+            item_info = get_card_details(item_id)
+            await message.answer_photo(**format_product_photo(item_info), parse_mode='html')
+        except ProductNotFoundError:
+            await message.answer(f'Товар с идентификатором {item_id} не найден', parse_mode='html')
+
+
+def _parse_message(message: str) -> int:
+    if message.isdigit():
+        return int(message)
+
+    url = re.findall(r'http.*\d{1,10}', message)
+
+    if url:
+        try:
+            item_id = int(url[0].split('/')[-1])
         except (IndexError, ValueError):
             logging.error(f'can`t parse{url}')
             raise WrongProductQuery
@@ -39,7 +44,8 @@ def format_product_photo(product_info: ProductModel):
     return {
         'photo': product_info.image_url,
         'caption': f'<b>{product_info.name}</b>\n'
-                   f'Цена: {product_info.price} руб.'
+                   f'Цена: {product_info.price} руб.\n'
+                   f'{product_info.url}'
     }
 
 
