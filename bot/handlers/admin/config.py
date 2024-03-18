@@ -3,7 +3,9 @@ import re
 from aiogram import types
 
 from exceptions import WrongProductQuery, ProductNotFoundError
+from models import Product
 from wb_services import get_card_details, ProductModel
+from http_services import create_product
 
 
 async def get_product(message: types.Message):
@@ -14,10 +16,18 @@ async def get_product(message: types.Message):
         return
 
     if item_id:
-        logging.info(f'item_id: %s' % item_id)
         try:
             item_info = get_card_details(item_id)
             await message.answer_photo(**format_product_photo(item_info), parse_mode='html')
+            await create_product(
+                Product(
+                    name=item_info.name,
+                    user_id=message.from_user.id,
+                    current_price=item_info.price,
+                    url=item_info.url,
+                    image_url=item_info.image_url
+                )
+            )
         except ProductNotFoundError:
             await message.answer(f'Товар с идентификатором {item_id} не найден', parse_mode='html')
 

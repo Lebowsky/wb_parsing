@@ -24,7 +24,7 @@ async def on_startup_notify(bot: Bot):
 
 
 async def main():
-    logging.basicConfig(level=logging.INFO)
+    logging.basicConfig(level=logging.DEBUG)
 
     bot = Bot(token=settings.token)
     dp = Dispatcher(storage=MemoryStorage(), events_isolation=SimpleEventIsolation())
