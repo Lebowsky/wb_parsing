@@ -11,6 +11,8 @@ from aiogram.types import BotCommandScopeAllGroupChats, BotCommand, BotCommandSc
 from config import settings
 from handlers import register_handlers
 
+logger = logging.getLogger(__name__)
+
 
 async def on_startup_notify(bot: Bot):
     for admin in settings.admins_id:
@@ -18,13 +20,13 @@ async def on_startup_notify(bot: Bot):
             text = 'Бот запущен'
             await bot.send_message(chat_id=admin, text=text)
         except TelegramBadRequest:
-            logging.info(f'chat {admin} not found')
+            logger.info(f'chat {admin} not found')
         except Exception as err:
-            logging.exception(err)
+            logger.exception(err)
 
 
 async def main():
-    logging.basicConfig(level=logging.DEBUG)
+    logging.basicConfig(level=logging.INFO)
 
     bot = Bot(token=settings.token)
     dp = Dispatcher(storage=MemoryStorage(), events_isolation=SimpleEventIsolation())

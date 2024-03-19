@@ -1,61 +1,39 @@
-from dataclasses import dataclass
-
-import requests
+import httpx
 import logging
 
+from json import JSONDecodeError
+from httpx import HTTPError
+
 import exceptions
+from constants import WB_HEADERS, WB_API_URL_GET_CARD, WB_URL_DETAIL
+from models.product import Product
 
 logger = logging.getLogger(__name__)
 
-headers = {
-    'Accept': '*/*',
-    'Accept-Language': 'ru-RU,ru;q=0.9,en-US;q=0.8,en;q=0.7',
-    'Connection': 'keep-alive',
-    'DNT': '1',
-    'Origin': 'https://www.wildberries.ru',
-    'Sec-Fetch-Dest': 'empty',
-    'Sec-Fetch-Mode': 'cors',
-    'Sec-Fetch-Site': 'cross-site',
-    'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/119.0.0.0 Safari/537.36',
-    'sec-ch-ua': '"Google Chrome";v="119", "Chromium";v="119", "Not?A_Brand";v="24"',
-    'sec-ch-ua-mobile': '?0',
-    'sec-ch-ua-platform': '"Windows"',
-}
 
-
-@dataclass
-class ProductModel:
-    id: int
-    name: str
-    url: str
-    image_url: str
-    price: float
-
-
-def get_card_details(item_id: int, **kwargs) -> ProductModel:
+async def get_card_details(item_id: int) -> Product:
     params = {
         'nm': item_id,
         'curr': 'rub',
     }
-    url = 'https://card.wb.ru/cards/v1/detail'
 
     try:
-        response = requests.get(url, params=params, headers=headers)
+        response = httpx.get(WB_API_URL_GET_CARD, params=params, headers=WB_HEADERS)
         products = response.json()['data']['products']
-    except (KeyError, requests.exceptions.JSONDecodeError, requests.exceptions.HTTPError) as e:
+    except (KeyError, JSONDecodeError, HTTPError) as e:
         logger.error(str(e))
         raise exceptions.ApiRequestError
 
     if products:
-        return ProductModel(
+        return Product(
             id=_parse_id(products[0]),
             name=_parse_name(products[0]),
             url=_get_product_url(products[0]),
             image_url=_get_image_url(products[0]),
-            price=_parse_price(products[0])
+            current_price=_parse_price(products[0])
         )
     else:
-        logging.debug(response.url)
+        logger.debug(response.url)
         raise exceptions.ProductNotFoundError
 
 
@@ -68,7 +46,7 @@ def _parse_name(product) -> str:
 
 
 def _get_product_url(product) -> str:
-    return 'https://www.wildberries.ru/catalog/{id}/detail.aspx'.format(**product)
+    return WB_URL_DETAIL.format(**product)
 
 
 def _get_image_url(product) -> str:
