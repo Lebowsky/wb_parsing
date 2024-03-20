@@ -10,7 +10,7 @@ from services import http_services
 async def get_product(message: types.Message):
     try:
         item_id = _parse_message(message.text)
-        item_info = await http_services.get_product_info(item_id)
+        item_info = await http_services.get_product_info(message.from_user.id, item_id)
     except WrongProductQuery:
         error_text = 'Неверный запрос'
     except ProductNotFoundError:

@@ -50,6 +50,7 @@ class Product(TimedBaseModel):
     __tablename__ = 'products'
 
     id: Mapped[int] = mapped_column(primary_key=True, autoincrement=True)
+    wb_id: Mapped[int] = mapped_column(nullable=False)
     name: Mapped[str] = mapped_column(nullable=False)
     group_id: Mapped[int] = mapped_column(nullable=True)
     current_price: Mapped[float] = mapped_column(nullable=True)

@@ -4,6 +4,7 @@ from pydantic import BaseModel
 
 
 class Product(BaseModel):
+    wb_id: int
     name: str
     group_id: Optional[int] = None
     user_id: int
@@ -17,6 +18,7 @@ class Product(BaseModel):
 
 
 class UpdateProduct(BaseModel):
+    wb_id: int
     name: Optional[str] = None
     group_id: Optional[int] = None
     price: Optional[float] = None
