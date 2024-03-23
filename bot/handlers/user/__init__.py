@@ -1,7 +1,7 @@
 from aiogram import Dispatcher
 
 from filters.product import IsProductIdFilter
-from products import get_product
+from .products import get_product
 from filters.admin import IsAdminFilter
 
 

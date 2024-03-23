@@ -1,6 +1,6 @@
 from models.product import Product
-from wb_services import get_card_details
-from api_services import get_user_products
+from .wb_services import get_card_details
+from .api_services import get_user_products
 
 
 async def get_product_info(user_id: int, product_id: int) -> Product:
