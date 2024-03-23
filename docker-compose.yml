@@ -1,0 +1,38 @@
+version: '3'
+services:
+  database:
+    image: postgres:14-alpine
+    container_name: wb_db
+    environment:
+      POSTGRES_USER: ${DB_USER}
+      POSTGRES_PASSWORD: ${DB_PASSWORD}
+      POSTGRES_DB: ${DB_NAME}
+      PGUSER: ${DB_USER}
+    restart: always
+    volumes:
+      - wb_db:/var/lib/postgresql/wb_data
+    networks:
+      - wb_network
+
+
+  db_api:
+    build:
+      context: api
+      dockerfile: ./api/Dockerfile
+    container_name: wb_db_api
+    command: uvicorn app:app --host 0.0.0.0
+    environment:
+      DB_URL: ${DB_URL}
+    ports:
+      - "88:8000"
+    networks:
+      - wb_network
+
+
+volumes:
+  wb_db:
+    name: wb_db
+
+networks:
+  wb_network:
+    name: wb_network
