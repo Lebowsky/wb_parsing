@@ -1,8 +1,10 @@
 import logging
 from json import JSONDecodeError
+from typing import Any, Generator
 
 import httpx
-from httpx import HTTPError
+from httpx import HTTPStatusError, RequestError
+from urllib.parse import urljoin
 
 from config import settings
 from exceptions import ApiRequestError
@@ -16,14 +18,14 @@ async def create_product(product: Product):
     httpx.post(_get_url(), json=data)
 
 
-async def get_user_products(user_id: int) -> list[Product]:
+async def get_user_products(user_id: int) -> Generator[Product, Any, None]:
     try:
-        result = httpx.get(_get_url(), params={'user_id': user_id})
-        return [Product.model_validate(item) for item in result.json()]
-    except (HTTPError, JSONDecodeError) as e:
+        result = httpx.get(_get_url(), params={'user_id': user_id}).raise_for_status().json()
+        return (Product.model_validate(item) for item in result)
+    except (RequestError, HTTPStatusError, JSONDecodeError) as e:
         logger.error(e)
         raise ApiRequestError
 
 
 def _get_url():
-    return f'{settings.server_url}/products/'
+    return urljoin(str(settings.server_url), 'products/')

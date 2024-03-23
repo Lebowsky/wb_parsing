@@ -6,34 +6,34 @@ from httpx import HTTPError
 
 import exceptions
 from constants import WB_HEADERS, WB_API_URL_GET_CARD, WB_URL_DETAIL
-from models.product import Product
+from models.product import WbProduct
 
 logger = logging.getLogger(__name__)
 
 
-async def get_card_details(item_id: int) -> Product:
+async def get_card_details(item_id: int) -> WbProduct:
     params = {
         'nm': item_id,
         'curr': 'rub',
     }
 
     try:
-        response = httpx.get(WB_API_URL_GET_CARD, params=params, headers=WB_HEADERS)
-        products = response.json()['data']['products']
+        response = httpx.get(WB_API_URL_GET_CARD, params=params, headers=WB_HEADERS).raise_for_status().json()
+        products = response['data']['products']
     except (KeyError, JSONDecodeError, HTTPError) as e:
         logger.error(str(e))
         raise exceptions.ApiRequestError
 
     if products:
-        return Product(
+        return WbProduct(
             id=_parse_id(products[0]),
             name=_parse_name(products[0]),
+            price=_parse_price(products[0]),
             url=_get_product_url(products[0]),
             image_url=_get_image_url(products[0]),
-            current_price=_parse_price(products[0])
         )
     else:
-        logger.debug(response.url)
+        logger.debug('Not found product with id=%s', item_id)
         raise exceptions.ProductNotFoundError
 
 
@@ -92,7 +92,3 @@ class ImgUrlGenerator:
 
         return f'https:{self.get_host(vol)}/vol{vol}/part{part}/{self.nm_id}/images/{self.size}/{self.number}.{self.format_}'
 
-
-if __name__ == '__main__':
-    # print(ImgUrlGenerator(76280452).url())
-    print(get_card_details('76280451'))
