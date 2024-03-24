@@ -18,7 +18,7 @@ services:
   db_api:
     build:
       context: api
-      dockerfile: ./api/Dockerfile
+      dockerfile: Dockerfile
     container_name: wb_db_api
     command: uvicorn app:app --host 0.0.0.0
     environment:
