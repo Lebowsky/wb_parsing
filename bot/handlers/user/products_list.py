@@ -22,8 +22,9 @@ logger = logging.getLogger(__name__)
 async def _get_card_data(**kwargs):
     manager: DialogManager = kwargs['dialog_manager']
     product_id = manager.dialog_data.get('current_card_id')
+    user_id = manager.event.from_user.id
 
-    card_data = (await get_card_data(product_id)).model_dump()
+    card_data = (await get_card_data(user_id, product_id)).model_dump()
     card_data['photo'] = MediaAttachment(ContentType.PHOTO, url=card_data['image_url'])
     return card_data
 

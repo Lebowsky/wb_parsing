@@ -4,18 +4,13 @@ from aiogram_dialog import Window, Dialog, DialogManager, StartMode
 from aiogram_dialog.widgets.kbd import Button
 from aiogram_dialog.widgets.text import Const, Format
 
+from dialogs.dialogs_data import get_products_ids
 from dialogs.dialogs_states import MainSG, ProductSG, ProductsListSG
 
 
 async def all_products(callback: CallbackQuery, button: Button, manager: DialogManager):
-    await manager.start(ProductsListSG.all, mode=StartMode.RESET_STACK, data=
-    [
-        62604402, 170430455, 168217638, 81796140
-    ])
-    # dialog_data = manager.dialog_data
-    # event = manager.event
-    # middleware_data = manager.middleware_data
-    # start_data = manager.start_data
+    products_ids, _, __ = await get_products_ids(manager.event.from_user.id)
+    await manager.start(ProductsListSG.all, mode=StartMode.RESET_STACK, data=list(products_ids))
 
 
 async def down_in_price(callback: CallbackQuery, button: Button, manager: DialogManager):
@@ -31,9 +26,10 @@ async def add_product(callback: CallbackQuery, button: Button, manager: DialogMa
 
 
 async def _on_start_dialog(callback: CallbackQuery, manager: DialogManager):
-    manager.dialog_data['products_stats'] = (
-        {'all_products': '(100)', 'down_in_price': '(50)', 'up_in_price': '(10)'}
-    )
+    manager.dialog_data['products_stats'] = dict(zip(
+        ('all_products', 'down_in_price', 'up_in_price'),
+        (f' ({len(items)}) ' if items else '' for items in (await get_products_ids(manager.event.from_user.id)))
+    ))
 
 
 async def _get_products_stats(**kwargs):
