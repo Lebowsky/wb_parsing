@@ -46,7 +46,7 @@ class ProductsService:
     async def update(self, product_id: int, product_data: UpdateProduct) -> tables.Product:
         product = await self._get(product_id)
         if product:
-            product_data = product_data.dict()
+            product_data = product_data.model_dump()
             price = product_data.pop('price', None)
 
             for field, value in product_data.items():
@@ -62,6 +62,33 @@ class ProductsService:
             return product.id
         else:
             raise HTTPException(status_code=status.HTTP_404_NOT_FOUND)
+
+    async def update_or_create(self, product_data: UpdateProduct) -> tables.Product:
+        q = select(tables.Product).where(
+            tables.Product.wb_id == product_data.wb_id,
+            tables.Product.user_id == product_data.user_id
+        )
+        res = await self.session.execute(q)
+        product = res.scalar()
+
+        if not product:
+            product = tables.Product()
+            self.session.add(product)
+
+        product_data = product_data.model_dump()
+        price = product_data.pop('price', None)
+
+        for field, value in product_data.items():
+            if value is not None:
+                setattr(product, field, value)
+
+        if price:
+            product.prices.append(tables.Price(price=price))
+            product.previous_price = product.current_price or price
+            product.current_price = price
+
+        await self.session.commit()
+        return product
 
     async def delete(self, product_id: int):
         product = await self._get(product_id)

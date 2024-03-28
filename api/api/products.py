@@ -19,17 +19,8 @@ async def get_user_products(
 
 
 @router.post('/')
-async def create_product(
-        product_data: Product,
-        service: ProductsService = Depends()
-):
-    return await service.create(product_data)
-
-
-@router.put('/')
 async def update_product(
-        product_id: int,
         product_data: UpdateProduct,
         service: ProductsService = Depends()
 ):
-    return await service.update(product_id, product_data)
+    return await service.update_or_create(product_data)

@@ -2,7 +2,7 @@ import unittest
 import asyncio
 
 testmodules = [
-        'tests.orm.tests_orm_services',
+        'tests.orm.tests_products',
     ]
 
 suite = unittest.TestSuite()

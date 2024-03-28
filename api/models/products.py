@@ -19,6 +19,7 @@ class Product(BaseModel):
 
 class UpdateProduct(BaseModel):
     wb_id: int
+    user_id: int
     name: Optional[str] = None
     group_id: Optional[int] = None
     price: Optional[float] = None
