@@ -71,19 +71,19 @@ class ProductsService:
         res = await self.session.execute(q)
         product = res.scalar()
 
+        product_data = product_data.model_dump()
+        price = product_data.pop('price', None)
+
         if not product:
             product = tables.Product()
             self.session.add(product)
-
-        product_data = product_data.model_dump()
-        price = product_data.pop('price', None)
 
         for field, value in product_data.items():
             if value is not None:
                 setattr(product, field, value)
 
         if price:
-            product.prices.append(tables.Price(price=price))
+            # product.prices.append(tables.Price(price=price))
             product.previous_price = product.current_price or price
             product.current_price = price
 
