@@ -6,6 +6,7 @@ from filters.admin import IsAdminFilter
 
 from .main import dialog as main_dialog
 from .product_commands import dialog as product_commands_dialog
+from .product_view import dialog as product_view_dialog
 from .start import start
 
 
@@ -15,4 +16,5 @@ def register_handlers(dp: Dispatcher):
 
     dp.include_router(main_dialog)
     dp.include_router(product_commands_dialog)
+    dp.include_router(product_view_dialog)
 

@@ -16,13 +16,13 @@ async def update_product(product: WbProduct, user_id: int) -> Product:
     try:
         result = httpx.post(
             _get_url(),
-            data=UpdateProduct(
+            json=UpdateProduct(
                 **product.model_dump(),
                 wb_id=product.id,
                 user_id=user_id
             ).model_dump()
         ).raise_for_status().json()
-        return result
+        return Product(**result)
     except (RequestError, HTTPStatusError, JSONDecodeError) as e:
         logger.error(e)
         raise ApiRequestError

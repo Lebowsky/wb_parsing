@@ -13,3 +13,8 @@ class ProductsListSG(StatesGroup):
 
 class ProductSG(StatesGroup):
     add = State()
+
+
+class ProductViewSG(StatesGroup):
+    view = State()
+    error = State()
