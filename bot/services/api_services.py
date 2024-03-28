@@ -28,5 +28,14 @@ async def update_product(product: WbProduct, user_id: int) -> Product:
         raise ApiRequestError
 
 
+async def get_products_by_user_id(user_id: int) -> list[Product]:
+    try:
+        result = httpx.get(_get_url(), params={'user_id': user_id}).raise_for_status().json()
+        return [Product(**item) for item in result]
+    except (RequestError, HTTPStatusError, JSONDecodeError) as e:
+        logger.error(e)
+        raise ApiRequestError
+
+
 def _get_url():
     return urljoin(str(settings.server_url), 'products/')

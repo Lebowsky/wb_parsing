@@ -23,7 +23,7 @@ async def _get_card_data(**kwargs):
     manager: DialogManager = kwargs['dialog_manager']
     product_id = manager.dialog_data.get('current_card_id')
 
-    card_data = get_card_data(product_id).model_dump()
+    card_data = (await get_card_data(product_id)).model_dump()
     card_data['photo'] = MediaAttachment(ContentType.PHOTO, url=card_data['image_url'])
     return card_data
 
@@ -65,8 +65,8 @@ async def _btn_add(callback: CallbackQuery, button: Button, manager: DialogManag
 window = Window(
     DynamicMedia('photo'),
     Format('{name}'),
-    Format('Прошлая цена: {current_price}'),
-    Format('Текущая цена: {previous_price}'),
+    Format('Старая цена: {current_price}'),
+    Format('Новая цена: {previous_price}'),
     Format('{url}'),
     Row(
         Button(Const('◀️'), id='btn_prev', on_click=_btn_prev),

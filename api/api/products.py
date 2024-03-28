@@ -15,7 +15,7 @@ async def get_user_products(
         user_id: int,
         service: ProductsService = Depends()
 ):
-    return await service.get_user_products(user_id=user_id)
+    return await service.get_products_by_user_id(user_id=user_id)
 
 
 @router.post('/', response_model=Product)
