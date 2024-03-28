@@ -1,6 +1,7 @@
-from fastapi import FastAPI
+from fastapi import FastAPI, Depends
 
 from api import router
+from services.pragma import PragmaService
 
 app = FastAPI(
     title='Wildberries web-parser',
@@ -8,7 +9,12 @@ app = FastAPI(
 )
 app.include_router(router=router)
 
-
 @app.get('/')
-def index():
+async def index():
+    return {'result': True}
+
+
+@app.post('/recreate_tables')
+async def recreate_tables(service: PragmaService = Depends()):
+    await service.recreate_tables()
     return {'result': True}
