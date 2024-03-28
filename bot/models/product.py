@@ -10,6 +10,16 @@ class WbProduct(BaseModel):
     image_url: Optional[str] = None
 
 
+class UpdateProduct(BaseModel):
+    wb_id: int
+    user_id: int
+    name: Optional[str] = None
+    group_id: Optional[int] = None
+    price: Optional[float] = None
+    url: str
+    image_url: Optional[str] = None
+
+
 class Product(BaseModel):
     name: str
     group_id: Optional[int] = None
