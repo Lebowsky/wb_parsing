@@ -29,10 +29,10 @@ async def add_product(callback: CallbackQuery, button: Button, manager: DialogMa
 
 main_window = Window(
     Const('Выберите пункт меню:'),
-    Button(Const('Мои товары'), id='all_products', on_click=all_products),
-    Button(Const('Подешевело'), id='down_in_price', on_click=down_in_price),
-    Button(Const('Подорожало'), id='up_in_price', on_click=up_in_price),
-    Button(Const('Добавить'), id='add_product', on_click=add_product),
+    Button(Const('Мои товары 🛒'), id='all_products', on_click=all_products),
+    Button(Const('Подешевело ↘️'), id='down_in_price', on_click=down_in_price),
+    Button(Const('Подорожало ↗️'), id='up_in_price', on_click=up_in_price),
+    Button(Const('Добавить ➕'), id='add_product', on_click=add_product),
     state=MainSG.main,
 )
 

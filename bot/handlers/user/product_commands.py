@@ -1,13 +1,14 @@
 import re
 import logging
 
-from aiogram.types import Message
+from aiogram.types import Message, CallbackQuery
 
 from aiogram_dialog import Window, Dialog, DialogManager, StartMode
 from aiogram_dialog.widgets.input import TextInput, ManagedTextInput
+from aiogram_dialog.widgets.kbd import Button
 from aiogram_dialog.widgets.text import Const
 
-from dialogs.dialogs_states import ProductSG, ProductViewSG
+from dialogs.dialogs_states import ProductSG, ProductViewSG, MainSG
 from exceptions import WrongProductQuery
 
 logger = logging.getLogger(__name__)
@@ -26,9 +27,14 @@ async def failure_input(message: Message, __: ManagedTextInput, manager: DialogM
     await manager.start(ProductSG.add, mode=StartMode.RESET_STACK)
 
 
+async def _btn_back(callback: CallbackQuery, button: Button, manager: DialogManager):
+    await manager.start(MainSG.main)
+
+
 add_product_window = Window(
     Const('Отправь ссылку на товар или его ID:'),
     TextInput('product_link', on_success=add_product, on_error=failure_input),
+    Button(Const('Назад'), id='back', on_click=_btn_back),
     state=ProductSG.add
 )
 
