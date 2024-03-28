@@ -4,11 +4,14 @@ from aiogram_dialog import Window, Dialog, DialogManager, StartMode
 from aiogram_dialog.widgets.kbd import Button
 from aiogram_dialog.widgets.text import Const
 
-from dialogs.dialogs_states import MainSG, ProductSG
+from dialogs.dialogs_states import MainSG, ProductSG, ProductsListSG
 
 
 async def all_products(callback: CallbackQuery, button: Button, manager: DialogManager):
-    pass
+    await manager.start(ProductsListSG.all, mode=StartMode.RESET_STACK, data=
+    [
+        62604402, 170430455, 168217638, 81796140
+    ])
     # dialog_data = manager.dialog_data
     # event = manager.event
     # middleware_data = manager.middleware_data

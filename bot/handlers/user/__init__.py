@@ -1,20 +1,22 @@
 from aiogram import Dispatcher
 from aiogram.filters import Command
 
-from .products_list import get_product
 from filters.admin import IsAdminFilter
 
-from .main import dialog as main_dialog
-from .product_commands import dialog as product_commands_dialog
-from .product_view import dialog as product_view_dialog
 from .start import start
+
+from . import (
+    main,
+    product_commands,
+    product_view,
+    products_list
+)
 
 
 def register_handlers(dp: Dispatcher):
     dp.message.register(start, IsAdminFilter(), Command('start'))
-    # dp.message.register(get_product, IsAdminFilter(), IsProductIdFilter())
 
-    dp.include_router(main_dialog)
-    dp.include_router(product_commands_dialog)
-    dp.include_router(product_view_dialog)
-
+    dp.include_router(main.dialog)
+    dp.include_router(product_commands.dialog)
+    dp.include_router(product_view.dialog)
+    dp.include_router(products_list.dialog)

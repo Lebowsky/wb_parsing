@@ -5,8 +5,8 @@ from aiogram.types import ContentType, CallbackQuery
 from aiogram_dialog import Window, Dialog, DialogManager
 from aiogram_dialog.widgets.input import TextInput
 from aiogram_dialog.widgets.kbd import Row, Button
-from aiogram_dialog.widgets.media import StaticMedia, DynamicMedia
-from aiogram_dialog.api.entities import MediaAttachment, MediaId
+from aiogram_dialog.widgets.media import DynamicMedia
+from aiogram_dialog.api.entities import MediaAttachment
 from aiogram_dialog.widgets.text import Const, Format
 
 from dialogs.dialogs_states import ProductViewSG, MainSG, ProductSG
